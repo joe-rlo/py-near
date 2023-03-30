@@ -1,6 +1,7 @@
 import asyncio
 import collections
 import json
+
 from typing import List, Union, Tuple, Dict, Optional
 
 import base58
@@ -28,6 +29,7 @@ from py_near.exceptions.exceptions import (
     FunctionCallError,
     NewReceiptValidationError, ExecutionError,
 )
+
 from py_near.models import (
     TransactionResult,
     ViewFunctionResult,
@@ -35,6 +37,7 @@ from py_near.models import (
     AccountAccessKey,
 )
 from py_near.providers import JsonProvider
+
 from py_near import transactions
 
 
@@ -54,6 +57,7 @@ _ERROR_TYPE_TO_EXCEPTION = {
     "ExecutionError": ExecutionError,
     "NewReceiptValidationError": NewReceiptValidationError,
 }
+
 
 
 class ViewFunctionError(Exception):
@@ -162,6 +166,7 @@ class Account(object):
                     result["status"]["Failure"]["ActionError"]["kind"].items()
                 )[0]
                 raise _ERROR_TYPE_TO_EXCEPTION[error_type](**args)
+
             return TransactionResult(**result)
         except Exception as e:
             raise e

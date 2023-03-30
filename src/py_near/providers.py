@@ -3,6 +3,7 @@ import json
 
 import aiohttp
 from aiohttp import ClientResponseError, ClientConnectorError
+
 from py_near import constants
 from py_near.exceptions.exceptions import RpcNotAvailableError
 from py_near.exceptions.provider import (
@@ -54,7 +55,9 @@ class JsonProvider(object):
         for rpc_addr in self._rpc_addresses:
             try:
                 async with aiohttp.ClientSession() as session:
+
                     r = await session.post(rpc_addr, json=j, timeout=timeout)
+
                     r.raise_for_status()
                     content = json.loads(await r.text())
                 if self._rpc_addresses[0] != rpc_addr:

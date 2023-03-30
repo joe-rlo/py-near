@@ -3,6 +3,7 @@ from enum import Enum
 from typing import List, Any, Optional, Union
 
 
+
 class ReceiptOutcome:
     logs: List[str]
     metadata: dict
@@ -21,6 +22,7 @@ class ReceiptOutcome:
         self.gas_burnt = data["outcome"]["gas_burnt"]
 
 
+
 class TransactionData:
     hash: str
     public_key: str
@@ -28,7 +30,9 @@ class TransactionData:
     signature: str
     signer_id: str
     nonce: int
+
     actions: List[dict]
+
 
     def __init__(
         self,
@@ -41,6 +45,7 @@ class TransactionData:
         actions,
         **kargs,
     ):
+
         self.actions = actions
         self.nonce = nonce
         self.signer_id = signer_id
@@ -83,7 +88,9 @@ class ViewFunctionResult:
     logs: List[str]
     result: Any
 
+
     def __init__(self, block_hash, block_height, logs, result):
+
         self.block_hash = block_hash
         self.block_height = block_height
         self.logs = logs
@@ -106,7 +113,9 @@ class AccessKey:
     @classmethod
     def build(cls, data: dict) -> "AccessKey":
         if data["permission"] == PublicKeyPermissionType.FULL_ACCESS:
+
             return cls(nonce=data["nonce"], permission_type=PublicKeyPermissionType.FULL_ACCESS)
+
 
         permission_type, permission_data = list(data["permission"].items())[0]
         return cls(
