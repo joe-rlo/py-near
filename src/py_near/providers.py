@@ -3,7 +3,6 @@ import json
 
 import aiohttp
 from aiohttp import ClientResponseError, ClientConnectorError
-from py_near.models import TransactionResult
 
 from py_near import constants
 from py_near.exceptions.exceptions import RpcNotAvailableError
@@ -56,7 +55,9 @@ class JsonProvider(object):
         for rpc_addr in self._rpc_addresses:
             try:
                 async with aiohttp.ClientSession() as session:
-                    r = await session.post(rpc_addr, json=j, timeout=30)
+
+                    r = await session.post(rpc_addr, json=j, timeout=timeout)
+
                     r.raise_for_status()
                     content = json.loads(await r.text())
                 if self._rpc_addresses[0] != rpc_addr:
@@ -66,8 +67,6 @@ class JsonProvider(object):
             except ClientResponseError:
                 continue
             except ClientConnectorError:
-                continue
-            except RpcTimeoutError:
                 continue
             except ConnectionError:
                 continue
@@ -160,13 +159,6 @@ class JsonProvider(object):
         )
 
     async def get_access_key(self, account_id, public_key, finality="optimistic"):
-        """
-
-        :param account_id:
-        :param public_key:
-        :param finality:
-        :return: {'block_hash': '..', 'block_height': int, 'nonce': int, 'permission': 'FullAccess'}
-        """
         return await self.json_rpc(
             "query",
             {
@@ -195,10 +187,8 @@ class JsonProvider(object):
     async def get_chunk(self, chunk_id):
         return await self.json_rpc("chunk", [chunk_id])
 
-    async def get_tx(self, tx_hash, tx_recipient_id) -> TransactionResult:
-        return TransactionResult(
-            **await self.json_rpc("tx", [tx_hash, tx_recipient_id])
-        )
+    async def get_tx(self, tx_hash, tx_recipient_id):
+        return await self.json_rpc("tx", [tx_hash, tx_recipient_id])
 
     async def get_changes_in_block(self, changes_in_block_request):
         return await self.json_rpc(
